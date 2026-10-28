@@ -1,0 +1,114 @@
+[
+  {
+    "id": "eval-refund-ticket",
+    "question": "A digital workshop starts in 12 hours. Can the customer still receive a refund?",
+    "expected_sources": ["refunds"],
+    "required_terms": ["24 hours", "outside"],
+    "forbidden_terms": ["eligible inside the final 24 hours"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-duplicate-payment",
+    "question": "What must support collect for a duplicate payment investigation?",
+    "expected_sources": ["refunds"],
+    "required_terms": ["invoice number", "payment references"],
+    "forbidden_terms": [],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-authenticator",
+    "question": "A customer lost their authenticator. What information and process should support use?",
+    "expected_sources": ["account-security"],
+    "required_terms": ["registered email", "secure upload portal"],
+    "forbidden_terms": ["identity verification may use ordinary chat"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-passport",
+    "question": "Should a customer paste a passport scan into chat to recover an account?",
+    "expected_sources": ["account-security"],
+    "required_terms": ["never", "secure upload portal"],
+    "forbidden_terms": ["passport scans are safe in chat"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-packed-address",
+    "question": "Can support change a delivery address after the warehouse packed the order?",
+    "expected_sources": ["shipping"],
+    "required_terms": ["cannot", "carrier"],
+    "forbidden_terms": ["support can change the address after packing"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-standard-shipping",
+    "question": "What is the usual standard shipping time?",
+    "expected_sources": ["shipping"],
+    "required_terms": ["three to five business days"],
+    "forbidden_terms": [],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-annual-refund",
+    "question": "Can an annual subscription receive a partial refund after 45 days?",
+    "expected_sources": ["subscriptions"],
+    "required_terms": ["not", "30-day"],
+    "forbidden_terms": ["partial refund is available after 45 days"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-pause",
+    "question": "How often and for how long can an active subscription be paused?",
+    "expected_sources": ["subscriptions"],
+    "required_terms": ["once per calendar quarter", "30 days"],
+    "forbidden_terms": [],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-outage-updates",
+    "question": "How frequently should updates be published during a confirmed outage?",
+    "expected_sources": ["incidents"],
+    "required_terms": ["30 minutes"],
+    "forbidden_terms": [],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-log-secrets",
+    "question": "May diagnostic logs sent to support contain authentication tokens?",
+    "expected_sources": ["incidents"],
+    "required_terms": ["must not", "authentication tokens"],
+    "forbidden_terms": ["authentication tokens may be included"],
+    "should_abstain": false
+  },
+  {
+    "id": "eval-bank-chargeback",
+    "question": "How many days will my external bank take to resolve a chargeback for a duplicate payment?",
+    "expected_sources": [],
+    "required_terms": [],
+    "forbidden_terms": [],
+    "should_abstain": true
+  },
+  {
+    "id": "eval-shipping-compensation",
+    "question": "What compensation amount is guaranteed if express shipping arrives late?",
+    "expected_sources": [],
+    "required_terms": [],
+    "forbidden_terms": [],
+    "should_abstain": true
+  },
+  {
+    "id": "eval-cafeteria",
+    "question": "Where can I find next week's cafeteria menu?",
+    "expected_sources": [],
+    "required_terms": [],
+    "forbidden_terms": [],
+    "should_abstain": true
+  },
+  {
+    "id": "eval-bicycle",
+    "question": "Can I reserve a bicycle parking space near the office?",
+    "expected_sources": [],
+    "required_terms": [],
+    "forbidden_terms": [],
+    "should_abstain": true
+  }
+]
