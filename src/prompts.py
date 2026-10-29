@@ -16,6 +16,12 @@ SYSTEM_INSTRUCTION = (
 )
 
 
+def evidence_text(hits) -> str:
+    """Render retrieved chunks as ``[document-id] text`` lines, the training context format."""
+
+    return "\n".join(f"[{hit.chunk.document_id}] {hit.chunk.text}" for hit in hits)
+
+
 def chat_messages(question: str, context: str) -> list[dict[str, str]]:
     """System instruction plus one user turn holding the evidence and question."""
 

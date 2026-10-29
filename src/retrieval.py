@@ -19,6 +19,8 @@ load_dotenv()
 
 KNOWLEDGE_BASE_DIR = Path("data/knowledge_base")
 COLLECTION_NAME = "northstar_policies"
+DEFAULT_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+DEFAULT_EMBEDDING_REVISION = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
 
 
 @dataclass(frozen=True)
@@ -132,16 +134,21 @@ class Retriever:
         storage_path: str | None = None,
     ) -> None:
         self.embedding_model = embedding_model or os.getenv(
-            "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+            "EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL
         )
         self.top_k = top_k if top_k is not None else int(os.getenv("TOP_K", "3"))
         self.min_score = (
             min_score if min_score is not None else float(os.getenv("MIN_SCORE", "0.30"))
         )
-        revision = embedding_revision or os.getenv("EMBEDDING_REVISION") or None
+        # Pin the default model's revision so reruns embed with the same weights.
+        self.embedding_revision = (
+            embedding_revision
+            or os.getenv("EMBEDDING_REVISION")
+            or (DEFAULT_EMBEDDING_REVISION if self.embedding_model == DEFAULT_EMBEDDING_MODEL else None)
+        )
         storage_path = storage_path or os.getenv("VECTOR_STORAGE_PATH") or None
 
-        self.model = SentenceTransformer(self.embedding_model, revision=revision)
+        self.model = SentenceTransformer(self.embedding_model, revision=self.embedding_revision)
         self.dimension = self.model.get_embedding_dimension()
         self.client = (
             QdrantClient(path=storage_path) if storage_path else QdrantClient(":memory:")

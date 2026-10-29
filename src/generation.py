@@ -13,13 +13,15 @@ Leave out ``--adapter`` to answer with the unchanged base model.
 
 import argparse
 import json
+import os
+from collections.abc import Callable
 from pathlib import Path
 
 import torch
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from src.prompts import inference_prompt
+from src.prompts import evidence_text, inference_prompt
 from src.training import SUMMARY_FILENAME, TrainingConfig
 
 
@@ -61,6 +63,16 @@ def generate_answer(model, tokenizer, question: str, context: str, max_new_token
     return tokenizer.decode(output[0, inputs.input_ids.shape[1] :], skip_special_tokens=True).strip()
 
 
+def make_generator(adapter_path: Path | str | None = None) -> Callable[[str, str], str]:
+    """Load a model once and return ``generate(question, context) -> answer``."""
+
+    model, tokenizer = load_model(adapter_path)
+    max_new_tokens = int(os.getenv("MAX_NEW_TOKENS", "80"))
+    return lambda question, context: generate_answer(
+        model, tokenizer, question, context, max_new_tokens
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--question", required=True)
@@ -75,7 +87,7 @@ if __name__ == "__main__":
         retriever = Retriever()
         retriever.index(build_chunks())
         result = retriever.retrieve(args.question)
-        context = "\n".join(f"[{hit.chunk.document_id}] {hit.chunk.text}" for hit in result.hits)
+        context = evidence_text(result.hits)
         print("Retrieved sources:", result.source_ids or "(none, below threshold)")
 
     model, tokenizer = load_model(args.adapter)
